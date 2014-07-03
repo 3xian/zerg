@@ -28,19 +28,19 @@ var (
 	}
 )
 
-func Compress(src []int32, srcOffset int) (dst int32, dstNum int) {
+func Compress(src []int32) (dst int32, dstNum int) {
 TypeLoop:
 	for i, slots := range bodySlots {
 		dst = int32(i) << bodySize
-		dstNum = util.MinInt(len(slots), len(src)-srcOffset)
+		dstNum = util.MinInt(len(slots), len(src))
 
-		bits := uint(0)
+		bitShift := uint(0)
 		for j := 0; j < dstNum; j++ {
-			if src[srcOffset+j] >= (1 << slots[j]) {
+			if src[j] >= (1 << slots[j]) {
 				continue TypeLoop
 			}
-			dst |= src[srcOffset+j] << bits
-			bits += slots[j]
+			dst |= src[j] << bitShift
+			bitShift += slots[j]
 		}
 		return
 	}
